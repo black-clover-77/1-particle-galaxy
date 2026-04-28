@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Particle Galaxy | VishwaNova 2026</title>
+    <meta name="description" content="Fly through a 3D galaxy of 5000+ particles. Interactive cosmic experience." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="loader">
+      <div class="loader-content">
+        <div class="loader-ring"></div>
+        <p class="loader-text">Initializing Universe...</p>
+      </div>
+    </div>
+
+    <audio id="bg-audio" loop src="https://cdn.pixabay.com/audio/2022/03/10/audio_82c2e0f2f3.mp3?v=1"></audio>
+
+    <button id="audio-toggle" class="glass-btn" aria-label="Toggle audio"><i class="fas fa-volume-up"></i></button>
+    <button id="fullscreen-btn" class="glass-btn" aria-label="Fullscreen"><i class="fas fa-expand"></i></button>
+    <button id="screenshot-btn" class="glass-btn" aria-label="Screenshot"><i class="fas fa-camera"></i></button>
+    <button id="settings-btn" class="glass-btn" aria-label="Settings"><i class="fas fa-cog"></i></button>
+
+    <main id="app">
+      <canvas id="galaxy-canvas"></canvas>
+
+      <div id="hud">
+        <div class="hud-item">
+          <span class="hud-label">PARTICLES</span>
+          <span id="particle-count">5,000</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">STARS</span>
+          <span id="star-count">47</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">GALAXIES</span>
+          <span id="galaxy-count">1</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">ZOOM</span>
+          <span id="zoom-level">1.0x</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">FPS</span>
+          <span id="fps-counter">60</span>
+        </div>
+      </div>
+
+      <div id="hero-text">
+        <h1 id="main-title"></h1>
+        <p class="subtitle">Click to create a supernova · Scroll to zoom · Drag to rotate</p>
+      </div>
+
+      <div id="controls-hint">
+        <span><i class="fas fa-mouse"></i> Drag to rotate</span>
+        <span><i class="fas fa-search-plus"></i> Scroll to zoom</span>
+        <span><i class="fas fa-star"></i> Click for supernova</span>
+        <span><i class="fas fa-rocket"></i> Double-click for warp</span>
+        <span><i class="fas fa-keyboard"></i> Press ? for shortcuts</span>
+      </div>
+
+      <!-- Settings Panel -->
+      <div id="settings-panel" class="glass-panel" style="display: none;">
+        <h3>Galaxy Settings</h3>
+        <div class="setting-group">
+          <label>Particle Count: <span id="particle-val">5000</span></label>
+          <input type="range" id="particle-slider" min="1000" max="10000" value="5000" step="500">
+        </div>
+        <div class="setting-group">
+          <label>Rotation Speed: <span id="rotation-val">1.0x</span></label>
+          <input type="range" id="rotation-slider" min="0" max="3" value="1" step="0.1">
+        </div>
+        <div class="setting-group">
+          <label>Star Brightness: <span id="brightness-val">100%</span></label>
+          <input type="range" id="brightness-slider" min="0" max="200" value="100" step="10">
+        </div>
+        <div class="setting-group">
+          <label>Nebula Intensity: <span id="nebula-val">50%</span></label>
+          <input type="range" id="nebula-slider" min="0" max="100" value="50" step="5">
+        </div>
+        <div class="setting-group">
+          <label>
+            <input type="checkbox" id="shooting-stars-toggle" checked>
+            Shooting Stars
+          </label>
+        </div>
+        <div class="setting-group">
+          <label>
+            <input type="checkbox" id="trails-toggle">
+            Particle Trails
+          </label>
+        </div>
+        <button id="reset-view-btn" class="btn-primary">Reset View</button>
+        <button id="close-settings-btn" class="btn-secondary">Close</button>
+      </div>
+
+      <!-- Constellation Mode -->
+      <div id="constellation-panel" class="glass-panel" style="display: none;">
+        <h3>Constellation Mode</h3>
+        <p>Click stars to connect them and create your own constellation!</p>
+        <button id="clear-constellation-btn" class="btn-secondary">Clear Lines</button>
+        <button id="save-constellation-btn" class="btn-primary">Save Constellation</button>
+        <button id="exit-constellation-btn" class="btn-secondary">Exit Mode</button>
+      </div>
+
+      <!-- Info Cards -->
+      <div id="info-cards" class="info-carousel">
+        <div class="info-card active">
+          <h4>Did You Know?</h4>
+          <p>You are made of stardust - every atom in your body was forged in the heart of a dying star.</p>
+        </div>
+        <div class="info-card">
+          <h4>Galaxy Facts</h4>
+          <p>Our Milky Way galaxy contains 100-400 billion stars and is 100,000 light-years across.</p>
+        </div>
+        <div class="info-card">
+          <h4>Cosmic Scale</h4>
+          <p>If the Sun were the size of a beach ball, Earth would be a peppercorn 26 meters away.</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div id="quick-actions">
+        <button class="action-btn" data-action="constellation"><i class="fas fa-project-diagram"></i> Constellation Mode</button>
+        <button class="action-btn" data-action="timelapse"><i class="fas fa-clock"></i> Time Lapse</button>
+        <button class="action-btn" data-action="blackhole"><i class="fas fa-circle"></i> Black Hole</button>
+        <button class="action-btn" data-action="collision"><i class="fas fa-meteor"></i> Galaxy Collision</button>
+      </div>
+    </main>
+
+    <footer class="github-badge">
+      <a href="https://github.com/AkshatRock/weboreel-hackathon" target="_blank"><i class="fas fa-star"></i> GitHub Repo</a>
+      <span>VishwaNova 2026</span>
+    </footer>
+
+    <!-- Keyboard Shortcuts Help -->
+    <div id="shortcuts-help" style="display: none;">
+      <div class="shortcuts-panel glass-panel">
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+          <li><kbd>S</kbd> <span>Screenshot</span></li>
+          <li><kbd>F</kbd> <span>Fullscreen</span></li>
+          <li><kbd>M</kbd> <span>Mute/Unmute</span></li>
+          <li><kbd>R</kbd> <span>Reset View</span></li>
+          <li><kbd>Space</kbd> <span>Warp Speed</span></li>
+          <li><kbd>C</kbd> <span>Constellation Mode</span></li>
+          <li><kbd>B</kbd> <span>Black Hole</span></li>
+          <li><kbd>?</kbd> <span>Toggle Help</span></li>
+        </ul>
+        <button id="close-help-btn" class="btn-primary">Close</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
